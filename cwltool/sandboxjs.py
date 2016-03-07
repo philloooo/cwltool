@@ -9,6 +9,11 @@ class JavascriptException(Exception):
 
 
 def execjs(js, jslib):
+
+    trynodes = (["xnodejs"],
+                ["node"],
+                ["docker", "run", "--attach=STDIN", "--attach=STDOUT",
+                 "--attach=STDERR", "--interactive", "--rm", "node:slim"])
     nodejs = None
     for n in trynodes:
         try:
