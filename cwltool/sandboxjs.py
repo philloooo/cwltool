@@ -10,14 +10,11 @@ class JavascriptException(Exception):
 
 def execjs(js, jslib):
     nodejs = None
-                                       "--attach=STDIN", "--attach=STDOUT", "--attach=STDERR",
-                                       "--interactive",
-                                       "--rm",
-                                       "node:slim"])
     for n in trynodes:
         try:
-            nodejs=subprocess.Popen(
-                n, stdin = subprocess.PIPE, stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+            nodejs = subprocess.Popen(
+                n, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE)
             break
         except OSError as e:
             if e.errno == errno.ENOENT:
@@ -27,13 +24,14 @@ def execjs(js, jslib):
 
     if nodejs is None:
         raise JavascriptException(
-            "cwltool requires Node.js engine to evaluate Javascript expressions, but couldn't find it.  Tried %s" % (trynodes,))
+            "cwltool requires Node.js engine to evaluate Javascript "
+            "expressions, but couldn't find it.  Tried %s" % (trynodes,))
 
-
-    fn="\"use strict\";%s\n(function()%s)()" % (jslib, js if isinstance(
-        js, basestring) and len(js) > 1 and js[0] == '{' else ("{return (%s);}" % js))
-    script = "console.log(JSON.stringify(require(\"vm\").runInNewContext(%s, {})));\n" % json.dumps(
-        fn)
+    fn = "\"use strict\";%s\n(function()%s)()" % (jslib, js if isinstance(
+        js, basestring) and len(js) > 1 and js[0] == '{' else (
+            "{return (%s);}" % js))
+    script = "console.log(JSON.stringify(require(\"vm\")" \
+             ".runInNewContext(%s, {})));\n" % json.dumps(fn)
 
     def term():
         try:
@@ -49,14 +47,18 @@ def execjs(js, jslib):
     tm.cancel()
 
     if nodejs.returncode != 0:
-        raise JavascriptException("Returncode was: %s\nscript was: %s\nstdout was: '%s'\nstderr was: '%s'\n" %
-                                  (nodejs.returncode, script, stdoutdata, stderrdata))
+        raise JavascriptException(
+                "Returncode was: %s\nscript was: %s\nstdout was: '%s'\nstderr"
+                " was: '%s'\n" % (
+                    nodejs.returncode, script, stdoutdata, stderrdata))
     else:
         try:
             return json.loads(stdoutdata)
         except ValueError:
-            raise JavascriptException("Returncode was: %s\nscript was: %s\nstdout was: '%s'\nstderr was: '%s'\n" %
-                                      (nodejs.returncode, script, stdoutdata, stderrdata))
+            raise JavascriptException(
+                    "Returncode was: %s\nscript was: %s\nstdout was: "
+                    "'%s'\nstderr was: '%s'\n" % (
+                        nodejs.returncode, script, stdoutdata, stderrdata))
 
 
 class SubstitutionError(Exception):
@@ -131,7 +133,8 @@ def scanner(scan):
 
     if len(stack) > 1:
         raise SubstitutionError(
-            "Substitution error, unfinished block starting at position {}: {}".format(start, scan[start:]))
+            "Substitution error, unfinished block "
+            "starting at position {}: {}".format(start, scan[start:]))
     else:
         return None
 

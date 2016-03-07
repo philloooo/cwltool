@@ -38,22 +38,26 @@ def arg_parser():
                         help="Output directory, default current directory")
 
     parser.add_argument("--no-container", action="store_false", default=True,
-                        help="Do not execute jobs in a Docker container, even when specified by the CommandLineTool",
+                        help="Do not execute jobs in a Docker container, even "
+                        "when specified by the CommandLineTool",
                         dest="use_container")
 
     parser.add_argument("--preserve-environment", type=str, nargs='+',
-                        help="Preserve specified environment variables when running CommandLineTools",
+                        help="Preserve specified environment variables when "
+                        "running CommandLineTools",
                         metavar=("VAR1", "VAR2"),
                         default=("PATH",),
                         dest="preserve_environment")
 
     exgroup = parser.add_mutually_exclusive_group()
     exgroup.add_argument("--rm-container", action="store_true", default=True,
-                         help="Delete Docker container used by jobs after they exit (default)",
+                         help="Delete Docker container used by jobs after "
+                         "they exit (default)",
                          dest="rm_container")
 
     exgroup.add_argument("--leave-container", action="store_false",
-                         default=True, help="Do not delete Docker container used by jobs after they exit",
+                         default=True, help="Do not delete Docker container "
+                         "used by jobs after they exit",
                          dest="rm_container")
 
     parser.add_argument("--tmpdir-prefix", type=str,
@@ -66,20 +70,25 @@ def arg_parser():
 
     exgroup = parser.add_mutually_exclusive_group()
     exgroup.add_argument("--rm-tmpdir", action="store_true", default=True,
-                         help="Delete intermediate temporary directories (default)",
+                         help="Delete intermediate temporary directories "
+                         "(default)",
                          dest="rm_tmpdir")
 
     exgroup.add_argument("--leave-tmpdir", action="store_false",
-                         default=True, help="Do not delete intermediate temporary directories",
+                         default=True, help="Do not delete intermediate "
+                         "temporary directories",
                          dest="rm_tmpdir")
 
     exgroup = parser.add_mutually_exclusive_group()
     exgroup.add_argument("--move-outputs", action="store_true", default=True,
-                         help="Move output files to the workflow output directory and delete intermediate output directories (default).",
+                         help="Move output files to the workflow output "
+                         "directory and delete intermediate output "
+                         "directories (default).",
                          dest="move_outputs")
 
     exgroup.add_argument("--leave-outputs", action="store_false", default=True,
-                         help="Leave output files in intermediate output directories.",
+                         help="Leave output files in intermediate output "
+                         "directories.",
                          dest="move_outputs")
 
     exgroup = parser.add_mutually_exclusive_group()
@@ -87,35 +96,42 @@ def arg_parser():
                          help="Try to pull Docker images", dest="enable_pull")
 
     exgroup.add_argument("--disable-pull", default=True, action="store_false",
-                         help="Do not try to pull Docker images", dest="enable_pull")
+                         help="Do not try to pull Docker images",
+                         dest="enable_pull")
 
     parser.add_argument("--dry-run", action="store_true",
                         help="Load and validate but do not execute")
 
     parser.add_argument("--rdf-serializer",
-                        help="Output RDF serialization format used by --print-rdf (one of turtle (default), n3, nt, xml)",
+                        help="Output RDF serialization format used by "
+                        "--print-rdf (one of turtle (default), n3, nt, xml)",
                         default="turtle")
 
     exgroup = parser.add_mutually_exclusive_group()
     exgroup.add_argument("--print-rdf", action="store_true",
-                         help="Print corresponding RDF graph for workflow and exit")
+                         help="Print corresponding RDF graph for workflow and "
+                         "exit")
     exgroup.add_argument("--print-dot", action="store_true",
-                         help="Print workflow visualization in graphviz format and exit")
+                         help="Print workflow visualization in graphviz "
+                         "format and exit")
     exgroup.add_argument("--print-pre", action="store_true",
                          help="Print CWL document after preprocessing.")
     exgroup.add_argument("--print-deps", action="store_true",
-                         help="Print CWL document dependencies from $import, $include, $schemas")
-    exgroup.add_argument(
-        "--version", action="store_true", help="Print version and exit")
+                         help="Print CWL document dependencies from $import, "
+                         "$include, $schemas")
+    exgroup.add_argument("--version", action="store_true",
+                         help="Print version and exit")
     exgroup.add_argument("--update", action="store_true",
                          help="Update to latest CWL version, print and exit")
 
     exgroup = parser.add_mutually_exclusive_group()
     exgroup.add_argument(
-        "--strict", action="store_true", help="Strict validation (unrecognized or out of place fields are error)",
+        "--strict", action="store_true", help="Strict validation "
+        "(unrecognized or out of place fields are error)",
         default=True, dest="strict")
     exgroup.add_argument(
-        "--non-strict", action="store_false", help="Lenient validation (ignore unrecognized fields)",
+        "--non-strict", action="store_false", help="Lenient validation "
+        "(ignore unrecognized fields)",
         default=True, dest="strict")
 
     exgroup = parser.add_mutually_exclusive_group()
@@ -127,7 +143,8 @@ def arg_parser():
         "--debug", action="store_true", help="Print even more logging")
 
     parser.add_argument(
-        "--tool-help", action="store_true", help="Print command line help for tool")
+        "--tool-help", action="store_true",
+        help="Print command line help for tool")
 
     parser.add_argument("workflow", type=str, nargs="?", default=None)
     parser.add_argument("job_order", nargs=argparse.REMAINDER)
@@ -344,7 +361,8 @@ def load_tool(argsworkflow, updateonly, strict, makeTool, debug,
             processobj = processobj[0]
         else:
             _logger.error(
-                "Tool file contains graph of multiple objects, must specify one of #%s",
+                "Tool file contains graph of multiple objects, must specify "
+                "one of #%s",
                 ", #".join(urlparse.urldefrag(i["id"])[1]
                            for i in processobj if "id" in i))
             return 1
@@ -418,8 +436,8 @@ def load_job_order(args, t, parser, stdin):
 
             if cmd_line["job_order"]:
                 try:
-                    input_basedir = args.basedir if args.basedir else os.path.abspath(
-                        os.path.dirname(cmd_line["job_order"]))
+                    input_basedir = args.basedir if args.basedir else \
+                        os.path.abspath(os.path.dirname(cmd_line["job_order"]))
                     job_order_object = loader.resolve_ref(
                         cmd_line["job_order"])
                 except Exception as e:
@@ -437,7 +455,9 @@ def load_job_order(args, t, parser, stdin):
             job_order_object = None
 
     for inp in t.tool["inputs"]:
-        if "default" in inp and (not job_order_object or shortname(inp["id"]) not in job_order_object):
+        if ("default" in inp and
+            (not job_order_object or
+                shortname(inp["id"]) not in job_order_object)):
             if not job_order_object:
                 job_order_object = {}
             job_order_object[shortname(inp["id"])] = inp["default"]
@@ -463,7 +483,8 @@ def scandeps(base, doc):
                 r.append({
                     "class": "File",
                     "path": p,
-                    "secondaryFiles": scandeps(os.path.dirname(p), yaml.load(f))
+                    "secondaryFiles": scandeps(
+                        os.path.dirname(p), yaml.load(f))
                 })
         elif "$include" in doc:
             p = os.path.join(base, doc["$include"])
@@ -556,7 +577,8 @@ def main(args=None,
         args.tmp_outdir_prefix = os.path.abspath(args.tmp_outdir_prefix)
         if not os.path.exists(args.tmp_outdir_prefix):
             _logger.error(
-                "Intermediate output directory prefix doesn't exist, reverting to default")
+                "Intermediate output directory prefix doesn't exist, "
+                "reverting to default")
             return 1
 
     if args.tmpdir_prefix != 'tmp':
