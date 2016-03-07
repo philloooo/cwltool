@@ -1,18 +1,14 @@
-import job
 import draft2tool
 from aslist import aslist
-from process import Process, get_feature, empty_subtree, shortname, uniquename
+from process import Process, empty_subtree, shortname, uniquename
 from errors import WorkflowException
 import copy
 import logging
 import random
 import os
 from collections import namedtuple
-import pprint
 import functools
 import schema_salad.validate as validate
-import urlparse
-import pprint
 import tempfile
 import shutil
 import json
@@ -296,7 +292,7 @@ class WorkflowJob(object):
                 yield j
         except WorkflowException:
             raise
-        except Exception as e:
+        except Exception:
             _logger.exception("Unhandled exception")
             self.processStatus = "permanentFail"
             step.completed = True
@@ -332,7 +328,6 @@ class WorkflowJob(object):
         output_dirs = set()
 
         completed = 0
-        iterables = []
         while completed < len(self.steps) and self.processStatus == "success":
             made_progress = False
 
@@ -419,7 +414,6 @@ class Workflow(Process):
         kwargs["requirements"] = self.requirements
         kwargs["hints"] = self.hints
 
-        makeTool = kwargs.get("makeTool")
         self.steps = [WorkflowStep(step, n, **kwargs)
                       for n, step in enumerate(self.tool.get("steps", []))]
         random.shuffle(self.steps)
